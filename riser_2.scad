@@ -1,3 +1,4 @@
 include <defs.scad>
 
-cube([a2, w-1, t-1]);
+a=a2;
+include <riser_t.scad>
