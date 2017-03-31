@@ -13,7 +13,6 @@ const int SENSOR_SAMPLE_DELAY_MS = 5;
 
 void setup() {
   // put your setup code here, to run once:
-
 }
 
 void turnToSensor(const int pin) {
@@ -49,8 +48,29 @@ void turnToRight() {
   turnToSensor(pin_cds_right);
 }
 
+int getTotalLight() {
+  return readSensor(pin_cds_left) + readSensor(pin_cds_right);
+}
+
 void findMaxLight() {
-  // TODO(raymond): Switch the DC motor to turn in the direction of the pin  
+  int total_reading;
+  int prev_total_reading = total_reading = getTotalLight();
+  
+  // Step left until the total sensor reading increases
+  while ((total_reading = getTotalLight()) < (prev_total_reading + DELTA_THRESHOLD)) {
+    prev_total_reading = total_reading;
+    nudgeTowardsSensor(pin_cds_left);
+  }
+  // Continue to step left until the total sensor reading decreases
+  while ((total_reading = getTotalLight()) >= (prev_total_reading + DELTA_THRESHOLD)) {
+    prev_total_reading = total_reading;
+    nudgeTowardsSensor(pin_cds_left);
+  }
+
+  // If we overshot past the high light level, go right a step
+  if (prev_total_reading > (total_reading + DELTA_THRESHOLD)) {
+    nudgeTowardsSensor(pin_cds_right);
+  }
 }
 
 void readSensors(const int leftPin, const int rightPin, int &leftReading, int &rightReading) {
