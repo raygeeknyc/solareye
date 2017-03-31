@@ -52,6 +52,7 @@ int getTotalLight() {
   return readSensor(pin_cds_left) + readSensor(pin_cds_right);
 }
 
+/* Find the next luminance peak to the left */
 void findMaxLight() {
   int total_reading;
   int prev_total_reading = total_reading = getTotalLight();
